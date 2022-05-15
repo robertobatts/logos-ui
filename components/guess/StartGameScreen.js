@@ -1,20 +1,37 @@
-import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import Card from './Card';
+import Colors from '../../constants/colors';
+import Input from './Input';
 
 const StartGameScreen = () => {
+    const [enteredValue, setEnteredValue] = useState('');
+
+    const handleNumberInput = (inputText) => {
+        setEnteredValue(inputText.replace(/[^0-9]/g, ''));
+    }
 
     return (
-        <View style={styles.screen}>
-            <Text style={styles.title}>Start a New Game!</Text>
-            <View style={styles.inputContainer}>
-                <Text>Select a Number</Text>
-                <TextInput onChangeText={() => {}}/>
-                <View style={styles.buttonContainer}>
-                    <Button title='Reset' onPress={() => {}}/>
-                    <Button title='Confirm' onPress={() => {}}/>
-                </View>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={styles.screen}>
+                <Text style={styles.title}>Start a New Game!</Text>
+                <Card style={styles.inputContainer}>
+                    <Text>Select a Number</Text>
+                    <Input
+                        style={styles.input}
+                        keyboardType='number-pad'
+                        maxLength={2}
+                        blurOnSubmit
+                        value={enteredValue}
+                        onChangeText={handleNumberInput}
+                    />
+                    <View style={styles.buttonContainer}>
+                        <Button styles={styles.button} title='Reset' color={Colors.secondary} onPress={() => { }} />
+                        <Button styles={styles.button} title='Confirm' color={Colors.primary} onPress={() => { }} />
+                    </View>
+                </Card>
             </View>
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -31,24 +48,20 @@ const styles = StyleSheet.create({
     inputContainer: {
         width: 300,
         maxWidth: '80%',
-        alignItems: 'center',
-        shadowColor: 'black',
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowRadius: 6,
-        shadowOpacity: 0.3,
-        backgroundColor: 'white',
-        elevation: 5,
-        borderRadius: 10,
-        padding: 20
+        alignItems: 'center'
     },
     buttonContainer: {
         flexDirection: 'row',
         width: '100%',
         justifyContent: 'space-between',
         paddingHorizontal: 15
+    },
+    button: {
+        width: 100
+    },
+    input: {
+        width: 50,
+        textAlign: 'center'
     }
 });
 
