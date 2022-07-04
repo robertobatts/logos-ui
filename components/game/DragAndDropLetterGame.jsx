@@ -5,7 +5,7 @@ import { DraxProvider, DraxView, DraxList } from 'react-native-drax';
 
 const gestureRootViewStyle = { flex: 1 };
 
-export default function DragAndDropGame() {
+export default function DragAndDropLetterGame() {
   const draggableItemList = [
     {
       "id": 1,
@@ -121,7 +121,6 @@ export default function DragAndDropGame() {
         receivingStyle={styles.receiving}
         renderContent={({ viewState }) => {
           const receivingDrag = viewState && viewState.receivingDrag;
-          const payload = receivingDrag && receivingDrag.payload;
           return (
             <View>
               <Text style={styles.textStyle}>{item.name}</Text>
@@ -131,17 +130,12 @@ export default function DragAndDropGame() {
         key={index}
         onReceiveDragDrop={(event) => {
           let selected_item = dragItemMiddleList[event.dragged.payload];
-          console.log('onReceiveDragDrop::index', selected_item, index);
-          console.log('onReceiveDragDrop :: payload', event.dragged.payload);
           let newReceivingItemList = [...receivingItemList];
-          console.log('onReceiveDragDrop :: newReceivingItemList', newReceivingItemList);
           newReceivingItemList[index] = selected_item;
           setReceivedItemList(newReceivingItemList);
 
           let newDragItemMiddleList = [...dragItemMiddleList];
-          console.log('onReceiveDragDrop :: newDragItemMiddleList 1', newDragItemMiddleList);
           newDragItemMiddleList[event.dragged.payload] = receivingItemList[index];
-          console.log('onReceiveDragDrop :: newDragItemMiddleList 2', newDragItemMiddleList);
           setDragItemListMiddle(newDragItemMiddleList);
         }}
       />
