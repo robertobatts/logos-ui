@@ -5,40 +5,27 @@ import { DraxProvider, DraxView, DraxList } from 'react-native-drax';
 
 const gestureRootViewStyle = { flex: 1 };
 
-export default function DragAndDropImageGame() {
-  const draggableItemList = [
-    {
-      "id": 1,
-			"image": 'https://learnenglishkids.britishcouncil.org/sites/kids/files/RS1874_Banana%20col-web.jpg'
-    },
-    {
-      "id": 2,
-			"image": 'https://learnenglishkids.britishcouncil.org/sites/kids/files/image/RS1882_Pineapple%20col-low.jpg'
-    },
-    {
-      "id": 3,
-			"image": 'https://play-lh.googleusercontent.com/DagqZEN3rFnFrBCHnPXkd1XAGCKSRLZe0_fHOzkbYypqMqLP-o3VQu9Ld0vKqsb9cA'
+const draggableItemList = [
+  {
+    'image': require('../../assets/image-game/banana-3.jpeg')
+  },
+  {
+    'image': require('../../assets/image-game/banana-1.jpeg')
+  },
+  {
+    'image': require('../../assets/image-game/banana-2.jpeg')
+  }
+];
+const FirstReceivingItemList = [
+  {
+  },
+  {
+  },
+  {
+  }
+];
 
-    },
-    {
-      "id": 4,
-			"image": 'https://image.shutterstock.com/z/stock-vector-cartoon-kiwi-flashcard-worksheet-for-children-education-game-for-kids-the-word-fruit-kiwi-1071484733.jpg'
-    }
-  ];
-  const FirstReceivingItemList = [
-    {
-      "id": 5
-    },
-    {
-      "id": 6
-    },
-    {
-      "id": 7
-    },
-    {
-      "id": 8
-    }
-  ];
+export default function DragAndDropImageGame() {
 
   const [receivingItemList, setReceivingItemList] = useState(FirstReceivingItemList);
   const [dragItemList, setDragItemList] = useState(draggableItemList);
@@ -46,15 +33,15 @@ export default function DragAndDropImageGame() {
   const DragUIComponent = ({ item, index }) => {
     return (
       <DraxView
-        style={[styles.centeredContent, styles.draggableBox]}
+        style={styles.draggableBox}
         draggingStyle={styles.dragging}
         dragReleasedStyle={styles.dragging}
         hoverDraggingStyle={styles.hoverDragging}
-        dragPayload={{index: index}}
+        dragPayload={{ index: index }}
         longPressDelay={150}
         key={index}
       >
-				<Image style={styles.draggableBox} source={{ uri: item.image }} />
+        <Image style={styles.image} source={item.image} />
       </DraxView>
     );
   }
@@ -62,35 +49,36 @@ export default function DragAndDropImageGame() {
   const ReceivingZoneUIComponent = ({ item, index }) => {
     return (
       <DraxView
-        style={[styles.centeredContent, styles.receivingZone, { backgroundColor: 'grey' }]}
+        style={[styles.receivingZone, { backgroundColor: 'grey' }]}
         receivingStyle={styles.receiving}
         draggingStyle={styles.dragging}
         dragReleasedStyle={styles.dragging}
         hoverDraggingStyle={styles.hoverDragging}
-        dragPayload={{index: index, type: 'RECEIVING_ZONE'}}
+        dragPayload={{ index: index, type: 'RECEIVING_ZONE' }}
         renderContent={({ viewState }) => {
-          return (
-						<Image style={styles.receivingZone} source={{ uri: item.image }} />
-          );
+          if (item.image) {
+            return <Image style={styles.image} source={item.image} />
+          }
+          return <></>;
         }}
         key={index}
         onReceiveDragDrop={(event) => {
-					if (event.dragged.payload.type === 'RECEIVING_ZONE') {
-						const newReceivingItemList = [...receivingItemList];
-						newReceivingItemList[event.dragged.payload.index] = receivingItemList[index];
-						newReceivingItemList[index] = receivingItemList[event.dragged.payload.index];
-						setReceivingItemList(newReceivingItemList);
-					} else {
-						let selectedItem = dragItemList[event.dragged.payload.index];
+          if (event.dragged.payload.type === 'RECEIVING_ZONE') {
+            const newReceivingItemList = [...receivingItemList];
+            newReceivingItemList[event.dragged.payload.index] = receivingItemList[index];
+            newReceivingItemList[index] = receivingItemList[event.dragged.payload.index];
+            setReceivingItemList(newReceivingItemList);
+          } else {
+            let selectedItem = dragItemList[event.dragged.payload.index];
 
-						const newReceivingItemList = [...receivingItemList];
-						newReceivingItemList[index].image = selectedItem.image;
-						setReceivingItemList(newReceivingItemList);
+            const newReceivingItemList = [...receivingItemList];
+            newReceivingItemList[index].image = selectedItem.image;
+            setReceivingItemList(newReceivingItemList);
 
-						const newDragItemList = [...dragItemList];
-						newDragItemList.splice(event.dragged.payload.index, 1);
-						setDragItemList(newDragItemList);
-					}
+            const newDragItemList = [...dragItemList];
+            newDragItemList.splice(event.dragged.payload.index, 1);
+            setDragItemList(newDragItemList);
+          }
         }}
       />
     );
@@ -118,7 +106,7 @@ export default function DragAndDropImageGame() {
               keyExtractor={(item, index) => index.toString()}
               numColumns={4}
               ItemSeparatorComponent={FlatListItemSeparator}
-              scrollEnabled={true}
+              scrollEnabled={false}
             />
           </View>
         </View>
@@ -134,28 +122,34 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     justifyContent: 'space-evenly',
   },
-  centeredContent: {
-    borderRadius: 10,
-  },
   receivingZone: {
     height: (Dimensions.get('window').width / 4) - 12,
-    borderRadius: 10,
     width: (Dimensions.get('window').width / 4) - 12,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 5
+    borderColor: 'grey',
+    borderWidth: 1,
+    margin: 2
+  },
+  image: {
+    height: '100%',
+    width: '100%',
+    borderRadius: 5
   },
   receiving: {
     borderColor: 'red',
     borderWidth: 2,
   },
   draggableBox: {
-    width: (Dimensions.get('window').width / 4) - 12,
     height: (Dimensions.get('window').width / 4) - 12,
-    borderRadius: 10,
+    width: (Dimensions.get('window').width / 4) - 12,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 5
+    borderColor: 'grey',
+    borderWidth: 1,
+    margin: 10
   },
   dragging: {
     opacity: 0.2,
@@ -166,14 +160,16 @@ const styles = StyleSheet.create({
   },
   receivingContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly'
+    justifyContent: 'center'
   },
   itemSeparator: {
     height: 15
   },
   draxListContainer: {
     padding: 5,
-    height: 200
+    height: 200,
+    justifyContent: 'center',
+    flexDirection: 'row'
   },
   receivingZoneContainer: {
     padding: 5,
