@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { DraxProvider, DraxView, DraxList } from 'react-native-drax';
+import { DraxProvider, DraxList } from 'react-native-drax';
+import DragAndDropImagePiece from './DragAndDropImagePiece';
+import DraggableImagePiece from './DraggableImagePiece';
 
 const gestureRootViewStyle = { flex: 1 };
 
@@ -16,70 +18,43 @@ const draggableItemList = [
     'image': require('../../assets/image-game/banana-2.jpeg')
   }
 ];
-const FirstReceivingItemList = [
-  {
-  },
-  {
-  },
-  {
-  }
-];
+const FirstReceivingItemList = [{},{},{}];
 
 export default function DragAndDropImageGame() {
 
   const [receivingItemList, setReceivingItemList] = useState(FirstReceivingItemList);
   const [dragItemList, setDragItemList] = useState(draggableItemList);
 
-  const DragUIComponent = ({ item, index }) => {
+  const onReceiveDragDrop = (event, index) => {
+    if (event.dragged.payload.type === 'RECEIVING_ZONE') {
+      const newReceivingItemList = [...receivingItemList];
+      newReceivingItemList[event.dragged.payload.index] = receivingItemList[index];
+      newReceivingItemList[index] = receivingItemList[event.dragged.payload.index];
+      setReceivingItemList(newReceivingItemList);
+    } else {
+      const selectedItem = dragItemList[event.dragged.payload.index];
+      const oldItem = receivingItemList[index];
+
+      const newReceivingItemList = [...receivingItemList];
+      newReceivingItemList[index] = selectedItem;
+      setReceivingItemList(newReceivingItemList);
+
+      const newDragItemList = [...dragItemList];
+      if (oldItem.image) {
+        newDragItemList[event.dragged.payload.index] = oldItem;
+      } else {
+        newDragItemList.splice(event.dragged.payload.index, 1);
+      }
+      setDragItemList(newDragItemList);
+    }
+  };
+
+  const DraxListItem = ({ item, index }) => {
     return (
-      <DraxView
-        style={styles.draggableBox}
-        draggingStyle={styles.dragging}
-        dragReleasedStyle={styles.dragging}
-        hoverDraggingStyle={styles.hoverDragging}
-        dragPayload={{ index: index }}
-        longPressDelay={150}
-        key={index}
-      >
-        <Image style={styles.image} source={item.image} />
-      </DraxView>
-    );
-  }
-
-  const ReceivingZoneUIComponent = ({ item, index }) => {
-    return (
-      <DraxView
-        style={[styles.receivingZone, { backgroundColor: 'grey' }]}
-        receivingStyle={styles.receiving}
-        draggingStyle={styles.dragging}
-        dragReleasedStyle={styles.dragging}
-        hoverDraggingStyle={styles.hoverDragging}
-        dragPayload={{ index: index, type: 'RECEIVING_ZONE' }}
-        renderContent={({ viewState }) => {
-          if (item.image) {
-            return <Image style={styles.image} source={item.image} />
-          }
-          return <></>;
-        }}
-        key={index}
-        onReceiveDragDrop={(event) => {
-          if (event.dragged.payload.type === 'RECEIVING_ZONE') {
-            const newReceivingItemList = [...receivingItemList];
-            newReceivingItemList[event.dragged.payload.index] = receivingItemList[index];
-            newReceivingItemList[index] = receivingItemList[event.dragged.payload.index];
-            setReceivingItemList(newReceivingItemList);
-          } else {
-            let selectedItem = dragItemList[event.dragged.payload.index];
-
-            const newReceivingItemList = [...receivingItemList];
-            newReceivingItemList[index].image = selectedItem.image;
-            setReceivingItemList(newReceivingItemList);
-
-            const newDragItemList = [...dragItemList];
-            newDragItemList.splice(event.dragged.payload.index, 1);
-            setDragItemList(newDragItemList);
-          }
-        }}
+      <DraggableImagePiece
+        item={item}
+        index={index}
+        styles={{ ...commonSyles, ...draggableStyles }}
       />
     );
   }
@@ -97,12 +72,20 @@ export default function DragAndDropImageGame() {
       <DraxProvider>
         <View style={styles.container}>
           <View style={styles.receivingContainer}>
-            {receivingItemList.map((item, index) => ReceivingZoneUIComponent({ item, index }))}
+            {receivingItemList.map((item, index) =>
+              <DragAndDropImagePiece
+                key={index}
+                item={item}
+                index={index}
+                onReceiveDragDrop={onReceiveDragDrop}
+                styles={{ ...commonSyles, ...receivingZoneStyles }}
+              />)
+            }
           </View>
           <View style={styles.draxListContainer}>
             <DraxList
               data={dragItemList}
-              renderItemContent={DragUIComponent}
+              renderItemContent={DraxListItem}
               keyExtractor={(item, index) => index.toString()}
               numColumns={4}
               ItemSeparatorComponent={FlatListItemSeparator}
@@ -115,13 +98,7 @@ export default function DragAndDropImageGame() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 12,
-    paddingTop: 40,
-    justifyContent: 'space-evenly',
-  },
+const receivingZoneStyles = StyleSheet.create({
   receivingZone: {
     height: (Dimensions.get('window').width / 4) - 12,
     width: (Dimensions.get('window').width / 4) - 12,
@@ -132,15 +109,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     margin: 2
   },
+  receiving: {
+    borderColor: 'red',
+    borderWidth: 2,
+  },
+});
+
+const commonSyles = StyleSheet.create({
+  dragging: {
+    opacity: 0.2,
+  },
+  hoverDragging: {
+    borderColor: 'magenta',
+    borderWidth: 2,
+  },
   image: {
     height: '100%',
     width: '100%',
     borderRadius: 5
   },
-  receiving: {
-    borderColor: 'red',
-    borderWidth: 2,
-  },
+});
+
+const draggableStyles = StyleSheet.create({
   draggableBox: {
     height: (Dimensions.get('window').width / 4) - 12,
     width: (Dimensions.get('window').width / 4) - 12,
@@ -150,13 +140,15 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
     borderWidth: 1,
     margin: 10
-  },
-  dragging: {
-    opacity: 0.2,
-  },
-  hoverDragging: {
-    borderColor: 'magenta',
-    borderWidth: 2,
+  }
+});
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 12,
+    paddingTop: 40,
+    justifyContent: 'space-evenly',
   },
   receivingContainer: {
     flexDirection: 'row',
