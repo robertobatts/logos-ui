@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DraxProvider, DraxList } from 'react-native-drax';
 import DragAndDropImagePiece from './DragAndDropImagePiece';
 import DraggableImagePiece from './DraggableImagePiece';
+import GamePassedScreen from './GamePassedScreen';
 
 const gestureRootViewStyle = { flex: 1 };
 
 const draggableItemList = [
   {
-    'image': require('../../assets/image-game/banana-3.jpeg')
+    'image': require('../../assets/image-game/banana-3.jpeg'),
+    'pos': 2
   },
   {
-    'image': require('../../assets/image-game/banana-1.jpeg')
+    'image': require('../../assets/image-game/banana-1.jpeg'),
+    'pos': 0
   },
   {
-    'image': require('../../assets/image-game/banana-2.jpeg')
+    'image': require('../../assets/image-game/banana-2.jpeg'),
+    'pos': 1
   }
 ];
 const FirstReceivingItemList = [{},{},{}];
@@ -24,6 +28,14 @@ export default function DragAndDropImageGame() {
 
   const [receivingItemList, setReceivingItemList] = useState(FirstReceivingItemList);
   const [dragItemList, setDragItemList] = useState(draggableItemList);
+  const [passed, setPassed] = useState(false);
+
+  useEffect(() => {
+    let isPassed = receivingItemList.length === draggableItemList.length;
+    receivingItemList.forEach((item, index) => isPassed = isPassed && index === item.pos);
+    setPassed(isPassed);
+  }, [receivingItemList]);
+  
 
   const onReceiveDragDrop = (event, index) => {
     if (event.dragged.payload.type === 'RECEIVING_ZONE') {
@@ -66,11 +78,15 @@ export default function DragAndDropImageGame() {
   return (
     <GestureHandlerRootView
       style={gestureRootViewStyle}>
+        <GamePassedScreen visible={passed}/>
       <View>
         <Text style={styles.headerStyle}>{'Drag drop and swap between lists'}</Text>
       </View>
       <DraxProvider>
         <View style={styles.container}>
+          <View>
+            {passed && <Text>{'Passed!'}</Text>}
+          </View>
           <View style={styles.receivingContainer}>
             {receivingItemList.map((item, index) =>
               <DragAndDropImagePiece
