@@ -8,35 +8,24 @@ import GamePassedScreen from './GamePassedScreen';
 
 const gestureRootViewStyle = { flex: 1 };
 
-const draggableItemList = [
-  {
-    'image': require('../../assets/image-game/banana-3.jpeg'),
-    'pos': 2
-  },
-  {
-    'image': require('../../assets/image-game/banana-1.jpeg'),
-    'pos': 0
-  },
-  {
-    'image': require('../../assets/image-game/banana-2.jpeg'),
-    'pos': 1
-  }
-];
-const FirstReceivingItemList = [{},{},{}];
+export default function DragAndDropImageGame({level, firstReceivingItemList, firstDragItemList, onNext}) {
 
-export default function DragAndDropImageGame() {
-
-  const [receivingItemList, setReceivingItemList] = useState(FirstReceivingItemList);
-  const [dragItemList, setDragItemList] = useState(draggableItemList);
+  const [receivingItemList, setReceivingItemList] = useState(firstReceivingItemList);
+  const [dragItemList, setDragItemList] = useState(firstDragItemList);
   const [passed, setPassed] = useState(false);
 
   useEffect(() => {
-    let isPassed = receivingItemList.length === draggableItemList.length;
+    let isPassed = receivingItemList.length === firstDragItemList.length;
     receivingItemList.forEach((item, index) => isPassed = isPassed && index === item.pos);
     setPassed(isPassed);
   }, [receivingItemList]);
-  
 
+  useEffect(() => {
+    setPassed(false);
+    setDragItemList(firstDragItemList);
+    setReceivingItemList(firstReceivingItemList);
+  }, [level]);
+  
   const onReceiveDragDrop = (event, index) => {
     if (event.dragged.payload.type === 'RECEIVING_ZONE') {
       const newReceivingItemList = [...receivingItemList];
@@ -78,7 +67,7 @@ export default function DragAndDropImageGame() {
   return (
     <GestureHandlerRootView
       style={gestureRootViewStyle}>
-        <GamePassedScreen visible={passed}/>
+        <GamePassedScreen visible={passed} onNext={onNext}/>
       <View>
         <Text style={styles.headerStyle}>{'Drag drop and swap between lists'}</Text>
       </View>

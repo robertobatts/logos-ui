@@ -1,13 +1,16 @@
 import React from 'react';
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { Button, Modal, StyleSheet, Text, View } from 'react-native';
 
-export default function GamePassedScreen({visible}) {
+export default function GamePassedScreen({ visible, onNext }) {
   return (
     <Modal visible={visible} animationType='slide'>
       <View style={styles.container}>
         <Text>
           Passed!
         </Text>
+        {onNext &&
+          <Button title='Next' onPress={onNext} />
+        }
       </View>
     </Modal>
   );
