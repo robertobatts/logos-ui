@@ -164,7 +164,6 @@ const styles = StyleSheet.create({
   },
   draxListContainer: {
     padding: 5,
-    height: 200,
     justifyContent: 'center',
     flexDirection: 'row'
   },
