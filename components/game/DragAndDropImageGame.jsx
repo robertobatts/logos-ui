@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DraxProvider, DraxList } from 'react-native-drax';
-import DragAndDropImagePiece from './DragAndDropImagePiece';
-import DraggableImagePiece from './DraggableImagePiece';
+import DragAndDropPiece from './DragAndDropPiece';
+import DraggablePiece from './DraggablePiece';
 import GamePassedScreen from './GamePassedScreen';
 
 const gestureRootViewStyle = { flex: 1 };
@@ -52,7 +52,7 @@ export default function DragAndDropImageGame({level, firstReceivingItemList, fir
 
   const DraxListItem = ({ item, index }) => {
     return (
-      <DraggableImagePiece
+      <DraggablePiece
         item={item}
         index={index}
         styles={{ ...commonSyles, ...draggableStyles }}
@@ -73,12 +73,9 @@ export default function DragAndDropImageGame({level, firstReceivingItemList, fir
       </View>
       <DraxProvider>
         <View style={styles.container}>
-          <View>
-            {passed && <Text>{'Passed!'}</Text>}
-          </View>
           <View style={styles.receivingContainer}>
             {receivingItemList.map((item, index) =>
-              <DragAndDropImagePiece
+              <DragAndDropPiece
                 key={index}
                 item={item}
                 index={index}

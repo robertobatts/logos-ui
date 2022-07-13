@@ -2,22 +2,44 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import DragAndDropImageGame from './DragAndDropImageGame';
 import GameSettings from '../../constants/gameSettings';
+import DragAndDropLetterGame from './DragAndDropLetterGame';
 
 export default function GameLevel() {
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(0);
 
-  const goToNextLevel = () => {
-    setLevel(level + 1);
-  };
+  const handleOnNext = level + 1 < GameSettings.length ? () => setLevel(level + 1) : null;
+
+  const getGame = () => {
+    const setting = GameSettings[level];
+    const type = setting ? setting.type : null;
+    let game = null;
+    switch (type) {
+      case 'WORD':
+        game =
+          <DragAndDropLetterGame
+            solution={setting.solution}
+            firstDragItemList={setting.firstDragItemList}
+            firstReceivingItemList={setting.firstReceivingItemList}
+            level={level + 1}
+            onNext={handleOnNext}
+          />;
+          break;
+      case 'IMAGE':
+        game =
+          <DragAndDropImageGame
+            firstDragItemList={setting.firstDragItemList}
+            firstReceivingItemList={setting.firstReceivingItemList}
+            level={level + 1}
+            onNext={handleOnNext}
+          />;
+          break;
+    }
+    return game;
+  }
 
   return (
     <View style={styles.screen}>
-      <DragAndDropImageGame 
-        firstDragItemList={GameSettings[level - 1].firstDragItemList} 
-        firstReceivingItemList={GameSettings[level - 1].firstReceivingItemList}
-        level={level}
-        onNext={level < GameSettings.length ? goToNextLevel : null}
-      />
+      {getGame()}
     </View>
   );
 }

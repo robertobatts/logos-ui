@@ -1,5 +1,22 @@
 export default [
   {
+    type: 'WORD',
+    solution: 'ABC',
+    firstDragItemList: [
+      {
+        text: 'B'
+      },
+      {
+        text: 'A'
+      },
+      {
+        text: 'C'
+      }
+    ],
+    firstReceivingItemList: [{},{},{}]
+  },
+  {
+    type: 'IMAGE',
     firstDragItemList: [
       {
         'image': require('../assets/image-game/banana-3.jpeg'),
@@ -17,6 +34,7 @@ export default [
     firstReceivingItemList: [{},{},{}]
   },
   {
+    type: 'IMAGE',
     firstDragItemList: [
       {
         'image': require('../assets/image-game/kiwi-3.jpeg'),
