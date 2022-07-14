@@ -11,9 +11,15 @@ export default [
       },
       {
         text: 'C'
+      },
+      {
+        text: 'E'
+      },
+      {
+        text: 'D'
       }
     ],
-    firstReceivingItemList: [{},{},{}]
+    firstReceivingItemList: [{},{},{},{},{}]
   },
   {
     type: 'IMAGE',

@@ -8,16 +8,17 @@ import GamePassedScreen from './GamePassedScreen';
 
 const gestureRootViewStyle = { flex: 1 };
 
-export default function DragAndDropLetterGame({level, solution, firstReceivingItemList, firstDragItemList, onNext}) {
+export default function DragAndDropLetterGame({ level, solution, firstReceivingItemList, firstDragItemList, onNext }) {
 
   const [receivingItemList, setReceivingItemList] = useState(firstReceivingItemList);
   const [dragItemList, setDragItemList] = useState(firstDragItemList);
   const [passed, setPassed] = useState(false);
 
+  const boxSize = (Dimensions.get('window').width - 100) / firstReceivingItemList.length;
+
   useEffect(() => {
     let word = '';
     receivingItemList.forEach((item, index) => word += item.text ? item.text : '');
-    console.log(word)
     setPassed(word === solution);
   }, [receivingItemList]);
 
@@ -26,7 +27,7 @@ export default function DragAndDropLetterGame({level, solution, firstReceivingIt
     setDragItemList(firstDragItemList);
     setReceivingItemList(firstReceivingItemList);
   }, [level]);
-  
+
   const onReceiveDragDrop = (event, index) => {
     if (event.dragged.payload.type === 'RECEIVING_ZONE') {
       const newReceivingItemList = [...receivingItemList];
@@ -51,15 +52,14 @@ export default function DragAndDropLetterGame({level, solution, firstReceivingIt
     }
   };
 
-  const DraxListItem = ({ item, index }) => {
-    return (
-      <DraggablePiece
-        item={item}
-        index={index}
-        styles={{ ...commonSyles, ...draggableStyles }}
-      />
-    );
-  }
+  const DraxListItem = ({ item, index }) => (
+    <DraggablePiece
+      item={item}
+      index={index}
+      width={boxSize}
+      height={boxSize}
+      styles={{ ...commonStyles, ...draggableStyles }} />
+  )
 
   const FlatListItemSeparator = () => {
     return (<View style={styles.itemSeparator} />);
@@ -68,7 +68,7 @@ export default function DragAndDropLetterGame({level, solution, firstReceivingIt
   return (
     <GestureHandlerRootView
       style={gestureRootViewStyle}>
-        <GamePassedScreen visible={passed} onNext={onNext}/>
+      <GamePassedScreen visible={passed} onNext={onNext} />
       <View>
         <Text style={styles.headerStyle}>{'Drag drop and swap between lists'}</Text>
       </View>
@@ -81,7 +81,9 @@ export default function DragAndDropLetterGame({level, solution, firstReceivingIt
                 item={item}
                 index={index}
                 onReceiveDragDrop={onReceiveDragDrop}
-                styles={{ ...commonSyles, ...receivingZoneStyles }}
+                width={boxSize}
+                height={boxSize}
+                styles={{ ...commonStyles, ...receivingZoneStyles }}
               />)
             }
           </View>
@@ -103,8 +105,6 @@ export default function DragAndDropLetterGame({level, solution, firstReceivingIt
 
 const receivingZoneStyles = StyleSheet.create({
   receivingZone: {
-    height: (Dimensions.get('window').width / 4) - 12,
-    width: (Dimensions.get('window').width / 4) - 12,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -118,7 +118,7 @@ const receivingZoneStyles = StyleSheet.create({
   },
 });
 
-const commonSyles = StyleSheet.create({
+const commonStyles = StyleSheet.create({
   dragging: {
     opacity: 0.2,
   },
@@ -130,14 +130,12 @@ const commonSyles = StyleSheet.create({
 
 const draggableStyles = StyleSheet.create({
   draggableBox: {
-    height: (Dimensions.get('window').width / 4) - 12,
-    width: (Dimensions.get('window').width / 4) - 12,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: 'grey',
     borderWidth: 1,
-    margin: 10
+    margin: 5
   }
 });
 
@@ -158,7 +156,8 @@ const styles = StyleSheet.create({
   draxListContainer: {
     padding: 5,
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   receivingZoneContainer: {
     padding: 5,

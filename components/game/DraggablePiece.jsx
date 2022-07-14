@@ -1,21 +1,24 @@
 import React from 'react';
-import { Image, Text } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text } from 'react-native';
 import { DraxView } from 'react-native-drax';
 
-export default function DraggablePiece({ item, index, styles }) {
+export default function DraggablePiece({ item, index, styles, width, height }) {
 
   const getContent = () => {
     if (item.image) {
-      return <Image style={styles.image} source={item.image} />;
+      return <Image
+        style={{ height: '100%', width: '100%', borderRadius: styles.draggableBox ? styles.draggableBox.borderRadius : 0 }}
+        source={item.image}
+      />;
     }
     if (item.text) {
-      return <Text>{item.text}</Text>;
+      return <Text style={{ fontSize: width / 2 }}>{item.text}</Text>;
     }
   }
 
   return (
     <DraxView
-      style={styles.draggableBox}
+      style={[styles.draggableBox, { width: width, height: height }]}
       draggingStyle={styles.dragging}
       dragReleasedStyle={styles.dragging}
       hoverDraggingStyle={styles.hoverDragging}

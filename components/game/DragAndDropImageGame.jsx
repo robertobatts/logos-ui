@@ -8,11 +8,13 @@ import GamePassedScreen from './GamePassedScreen';
 
 const gestureRootViewStyle = { flex: 1 };
 
-export default function DragAndDropImageGame({level, firstReceivingItemList, firstDragItemList, onNext}) {
+export default function DragAndDropImageGame({ level, firstReceivingItemList, firstDragItemList, onNext }) {
 
   const [receivingItemList, setReceivingItemList] = useState(firstReceivingItemList);
   const [dragItemList, setDragItemList] = useState(firstDragItemList);
   const [passed, setPassed] = useState(false);
+
+  const boxSize = (Dimensions.get('window').width - 100) / firstReceivingItemList.length;
 
   useEffect(() => {
     let isPassed = receivingItemList.length === firstDragItemList.length;
@@ -25,7 +27,7 @@ export default function DragAndDropImageGame({level, firstReceivingItemList, fir
     setDragItemList(firstDragItemList);
     setReceivingItemList(firstReceivingItemList);
   }, [level]);
-  
+
   const onReceiveDragDrop = (event, index) => {
     if (event.dragged.payload.type === 'RECEIVING_ZONE') {
       const newReceivingItemList = [...receivingItemList];
@@ -55,7 +57,9 @@ export default function DragAndDropImageGame({level, firstReceivingItemList, fir
       <DraggablePiece
         item={item}
         index={index}
-        styles={{ ...commonSyles, ...draggableStyles }}
+        width={boxSize}
+        height={boxSize}
+        styles={{ ...commonStyles, ...draggableStyles }}
       />
     );
   }
@@ -67,7 +71,7 @@ export default function DragAndDropImageGame({level, firstReceivingItemList, fir
   return (
     <GestureHandlerRootView
       style={gestureRootViewStyle}>
-        <GamePassedScreen visible={passed} onNext={onNext}/>
+      <GamePassedScreen visible={passed} onNext={onNext} />
       <View>
         <Text style={styles.headerStyle}>{'Drag drop and swap between lists'}</Text>
       </View>
@@ -80,7 +84,9 @@ export default function DragAndDropImageGame({level, firstReceivingItemList, fir
                 item={item}
                 index={index}
                 onReceiveDragDrop={onReceiveDragDrop}
-                styles={{ ...commonSyles, ...receivingZoneStyles }}
+                width={boxSize}
+                height={boxSize}
+                styles={{ ...commonStyles, ...receivingZoneStyles }}
               />)
             }
           </View>
@@ -102,8 +108,6 @@ export default function DragAndDropImageGame({level, firstReceivingItemList, fir
 
 const receivingZoneStyles = StyleSheet.create({
   receivingZone: {
-    height: (Dimensions.get('window').width / 4) - 12,
-    width: (Dimensions.get('window').width / 4) - 12,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -117,31 +121,24 @@ const receivingZoneStyles = StyleSheet.create({
   },
 });
 
-const commonSyles = StyleSheet.create({
+const commonStyles = StyleSheet.create({
   dragging: {
     opacity: 0.2,
   },
   hoverDragging: {
     borderColor: 'magenta',
     borderWidth: 2,
-  },
-  image: {
-    height: '100%',
-    width: '100%',
-    borderRadius: 5
-  },
+  }
 });
 
 const draggableStyles = StyleSheet.create({
   draggableBox: {
-    height: (Dimensions.get('window').width / 4) - 12,
-    width: (Dimensions.get('window').width / 4) - 12,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: 'grey',
     borderWidth: 1,
-    margin: 10
+    margin: 5
   }
 });
 
