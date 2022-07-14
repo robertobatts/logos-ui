@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Image, StyleSheet, Text } from 'react-native';
+import { Image, Text } from 'react-native';
 import { DraxView } from 'react-native-drax';
 
 export default function DraggablePiece({ item, index, styles, width, height }) {
