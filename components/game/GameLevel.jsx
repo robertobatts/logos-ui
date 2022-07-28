@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Modal, StyleSheet, View } from 'react-native';
 import DragAndDropImageGame from './DragAndDropImageGame';
 import GameSettings from '../../constants/gameSettings';
 import DragAndDropLetterGame from './DragAndDropLetterGame';
 
-export default function GameLevel() {
+export default function GameLevel({ type }) {
   const [level, setLevel] = useState(0);
+  const [visible, setVisible] = useState(false);
+  
+  const handleOnNext = GameSettings[type] &&  level + 1 < GameSettings[type].length ? () => setLevel(level + 1) : null;
 
-  const handleOnNext = level + 1 < GameSettings.length ? () => setLevel(level + 1) : null;
+  useEffect(() => {
+    if (type) {
+      setVisible(true);
+    } else {
+      setVisible(false);
+    }
+  }, [type]);
 
   const getGame = () => {
-    const setting = GameSettings[level];
-    const type = setting ? setting.type : null;
+    const setting = type ? GameSettings[type][level] : null;
     let game = null;
     switch (type) {
       case 'WORD':
@@ -23,7 +31,7 @@ export default function GameLevel() {
             level={level + 1}
             onNext={handleOnNext}
           />;
-          break;
+        break;
       case 'IMAGE':
         game =
           <DragAndDropImageGame
@@ -32,15 +40,17 @@ export default function GameLevel() {
             level={level + 1}
             onNext={handleOnNext}
           />;
-          break;
+        break;
     }
     return game;
   }
 
   return (
-    <View style={styles.screen}>
-      {getGame()}
-    </View>
+    <Modal visible={visible} animationType='slide'>
+      <View style={styles.screen}>
+        {getGame()}
+      </View>
+    </Modal>
   );
 }
 
