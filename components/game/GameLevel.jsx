@@ -10,6 +10,10 @@ export default function GameLevel({ navigation, route }) {
 
   const handleOnNext = GameSettings[type] &&  level + 1 < GameSettings[type].length ? () => setLevel(level + 1) : null;
 
+  const handleOnClose = () => {
+    setLevel(level + 1);
+    navigation.navigate('Main');
+  }
 
   const getGame = () => {
     const setting = type ? GameSettings[type][level] : null;
@@ -23,6 +27,7 @@ export default function GameLevel({ navigation, route }) {
             firstReceivingItemList={setting.firstReceivingItemList}
             level={level + 1}
             onNext={handleOnNext}
+            onClose={handleOnClose}
           />;
         break;
       case 'IMAGE':
@@ -32,6 +37,7 @@ export default function GameLevel({ navigation, route }) {
             firstReceivingItemList={setting.firstReceivingItemList}
             level={level + 1}
             onNext={handleOnNext}
+            onClose={handleOnClose}
           />;
         break;
     }

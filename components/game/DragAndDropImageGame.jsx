@@ -4,11 +4,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { DraxProvider, DraxList } from 'react-native-drax';
 import DragAndDropPiece from './DragAndDropPiece';
 import DraggablePiece from './DraggablePiece';
-import GamePassedScreen from './GamePassedScreen';
+import GamePassedModal from './GamePassedModal';
 
 const gestureRootViewStyle = { flex: 1 };
 
-export default function DragAndDropImageGame({ level, firstReceivingItemList, firstDragItemList, onNext }) {
+export default function DragAndDropImageGame({ level, firstReceivingItemList, firstDragItemList, onNext, onClose }) {
 
   const [receivingItemList, setReceivingItemList] = useState(firstReceivingItemList);
   const [dragItemList, setDragItemList] = useState(firstDragItemList);
@@ -27,6 +27,11 @@ export default function DragAndDropImageGame({ level, firstReceivingItemList, fi
     setDragItemList(firstDragItemList);
     setReceivingItemList(firstReceivingItemList);
   }, [level]);
+
+  const onRequestClose = () => {
+    setPassed(false);
+    onClose();
+  }
 
   const onReceiveDragDrop = (event, index) => {
     if (event.dragged.payload.type === 'RECEIVING_ZONE') {
@@ -71,7 +76,7 @@ export default function DragAndDropImageGame({ level, firstReceivingItemList, fi
   return (
     <GestureHandlerRootView
       style={gestureRootViewStyle}>
-      <GamePassedScreen visible={passed} onNext={onNext} />
+      <GamePassedModal visible={passed} onNext={onNext} onRequestClose={onRequestClose} />
       <View>
         <Text style={styles.headerStyle}>{'Drag drop and swap between lists'}</Text>
       </View>
