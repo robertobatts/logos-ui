@@ -12,7 +12,7 @@ export default function GameLevel({ navigation, route }) {
 
   const handleOnClose = () => {
     setLevel(level + 1);
-    navigation.navigate('Main');
+    navigation.popToTop();
   }
 
   const getGame = () => {
